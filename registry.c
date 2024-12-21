@@ -1,3 +1,4 @@
+/*windows.h contain declaration of typedef HANDLE, HWND.*/
 #include <windows.h>
 
 
