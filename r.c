@@ -22,14 +22,14 @@ int scanRegistryKey(HKEY hKey, const char* keyName) {
 
 int main() {
 
-    // Open registry root key (e.g., HKEY_LOCAL_MACHINE)
-
+    /*Open registry root key (e.g., HKEY_LOCAL_MACHINE)*/
     HKEY hRootKey = HKEY_LOCAL_MACHINE;
 
 
 
-    // Prompt user for the registry key to scan 
-
+    /* Prompt user for the registry key to scan 
+       HKEY_LOCAL_MACHINE\Software
+    */
     printf("Enter registry key to scan (e.g., 'Software\\Microsoft'): ");
 
     char keyToScan[MAX_PATH];
