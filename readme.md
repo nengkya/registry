@@ -5,5 +5,5 @@
   typedef PVOID HANDLE;  
   
   typedef void * PVOID;
-*/
+*/  
 HKEY hRootKey;
