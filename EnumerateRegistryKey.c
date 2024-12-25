@@ -1,65 +1,39 @@
-#include <windows.h>
+#include <windows.h> /*HKEY_CURRENT_USER*/
 #include <stdio.h>
 
-void EnumerateRegistryKey(HKEY hKey, const char *subKey) {
-    HKEY hOpenKey;
-    LONG result;
-    DWORD index = 0;
-    char keyName[256];
-    char valueName[256];
-    BYTE data[1024];
-    DWORD keyNameSize, valueNameSize, dataSize;
-    DWORD type;
 
-    // Open the specified registry key
-    result = RegOpenKeyEx(hKey, subKey, 0, KEY_READ, &hOpenKey);
-    if (result != ERROR_SUCCESS) {
-        printf("Failed to open registry key: %ld\n", result);
-        return;
-    }
+void EnumerateRegistryKey(HKEY hKey, const char * subKey) {
 
-    printf("Opened registry key: %s\n", subKey);
+	long result;
+	HKEY hOpenKey;
 
-    // Enumerate subkeys
-    while (1) {
-        keyNameSize = sizeof(keyName);
-        result = RegEnumKeyEx(hOpenKey, index, keyName, &keyNameSize, NULL, NULL, NULL, NULL);
-        if (result == ERROR_NO_MORE_ITEMS) {
-            break;
-        } else if (result == ERROR_SUCCESS) {
-            printf("Subkey[%d]: %s\n", index, keyName);
-        } else {
-            printf("Error enumerating subkeys: %ld\n", result);
-            break;
-        }
-        index++;
-    }
+	/*LSTATUS RegOpenKeyExA(
+		[in]           HKEY   hKey,
+		[in, optional] LPCSTR lpSubKey,
+		[in]           DWORD  ulOptions,
+		[in]           REGSAM samDesired,
+		[out]          PHKEY  phkResult
+	);
 
-    // Enumerate values
-    index = 0;
-    while (1) {
-        valueNameSize = sizeof(valueName);
-        dataSize = sizeof(data);
-        result = RegEnumValue(hOpenKey, index, valueName, &valueNameSize, NULL, &type, data, &dataSize);
-        if (result == ERROR_NO_MORE_ITEMS) {
-            break;
-        } else if (result == ERROR_SUCCESS) {
-            printf("Value[%d]: Name='%s', DataSize=%lu, Type=%lu\n", index, valueName, dataSize, type);
-        } else {
-            printf("Error enumerating values: %ld\n", result);
-            break;
-        }
-        index++;
-    }
+	LONG STATUS
+	typedef const char * LPCSTR;
+	REGistry Security Access Mask
+	Pointer Handle KEY
+	*/
+	result = RegOpenKeyEx(hKey, subKey, 0, KEY_READ, &hOpenKey);
 
-    // Close the registry key
-    RegCloseKey(hOpenKey);
+	if (result != ERROR_SUCCESS) {
+		printf("Failed to open registry key ! %ld\n", result);
+	}
+
+
+
 }
+
 
 int main() {
-    // Example: Scan HKEY_CURRENT_USER\Software
-    EnumerateRegistryKey(HKEY_CURRENT_USER, "Software");
 
-    return 0;
+	EnumerateRegistryKey(HKEY_CURRENT_USER, "Software");
+
+
 }
-
