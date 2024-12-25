@@ -1,19 +1,41 @@
 /*windows.h contain declaration of typedef HANDLE, HWND.*/
 #include <windows.h>
+#include <stdio.h>
 
 
 int main() {
 
-    /*Handle to Registry Key
+	/*Handle to Registry Key
+	typedef HANDLE HKEY;
+	typedef PVOID HANDLE;
+	typedef void * PVOID;
 
-      typedef HANDLE HKEY;
+	open registry root key (e.g., HKEY_LOCAL_MACHINE)
+	*/
+	HKEY hRootKey = HKEY_LOCAL_MACHINE, hKey;
+	char * keyToScan;
 
-      typedef PVOID HANDLE;
+	printf("enter registry to scan (e.g : software\\microsoft) : ");
+	scanf("%s", keyToScan);
 
-      typedef void * PVOID;
+	/*LSTATUS RegOpenKeyExA(
+		[in]           HKEY   hKey,
+		[in, optional] LPCSTR lpSubKey,
+		[in]           DWORD  ulOptions,
+		[in]           REGSAM samDesired,
+		[out]          PHKEY  phkResult
+	);
 
-      open registry root key (e.g., HKEY_LOCAL_MACHINE)
-    */
-    HKEY hRootKey;
+	LONG STATUS
+	typedef const char * LPCSTR;
+	REGistry Security Access Mask
+	Pointer Handle KEY
+	*/
+	if (RegOpenKeyEx(hRootKey, keyToScan, 0, KEY_READ, &hKey) != ERROR_SUCCESS) {
+
+		printf("Error opening registry key.\n");
+		return 1;
+
+	}
 
 }
