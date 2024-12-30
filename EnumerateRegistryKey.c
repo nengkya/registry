@@ -6,8 +6,10 @@ void EnumerateRegistryKey(HKEY hKey, const char * subKey) {
 
 	long result;
 	HKEY hOpenKey;
-	char keyName[256];
-	DWORD keyNameSize, index = 0;
+	char keyName[256], valueName[256];
+	DWORD keyNameSize, index = 0, valueNameSize, type;
+	LPBYTE dataSize = NULL;
+	LPDWORD longPointerCountByteData;
 
 	/*LSTATUS RegOpenKeyExA(
 		[in]           HKEY   hKey,
@@ -23,13 +25,15 @@ void EnumerateRegistryKey(HKEY hKey, const char * subKey) {
 	Pointer Handle KEY
 	*/
 	result = RegOpenKeyEx(hKey, subKey, 0, KEY_READ, &hOpenKey);
-
+	
+	/*#define ERROR_SUCCESS 0 (0x0) //the operation completed successfully.*/
 	if (result != ERROR_SUCCESS) {
-		printf("Failed to open registry key ! %ld\n", result);
+		printf("Failed to open registry key ! %ld (ERROR_FILE_NOT FOUND)\n", result);
 	}
 
 	printf("Open key : %s\n", subKey);
 
+	/*enumerate subkeys*/
 	while (1) {
 		
 		keyNameSize = sizeof(keyName);
@@ -56,9 +60,48 @@ void EnumerateRegistryKey(HKEY hKey, const char * subKey) {
 		  );
 		*/
 		result = RegEnumKeyEx(hOpenKey, index, keyName, &keyNameSize, 0, 0, 0, 0);	
+		
+		/*#define ERROR_NO_MORE_ITEMS 259 (0x103)*/
+		if (result == ERROR_NO_MORE_ITEMS) {
+			break;
+		}
+		if (result == ERROR_SUCCESS) {
+			printf("Subkey[%ld] : %s\n", index, keyName);
+		} else {
+			printf("Error enumerating subkeys : %ld (ERROR_INVALID_HANDLE)\n", result);
+			break;
+		}
 
+		++index;
 
+	}
 
+	/*enumerate value*/
+	index = 0;
+
+	while (2) {
+
+		valueNameSize = sizeof(valueName);
+
+		/*LSTATUS RegEnumValueA(
+			[in]                HKEY    hKey,
+			[in]                DWORD   dwIndex,
+			[out]               LPSTR   lpValueName,
+			[in, out]           LPDWORD lpcchValueName,
+					    LPDWORD lpReserved,
+			[out, optional]     LPDWORD lpType,
+			[out, optional]     LPBYTE  lpData,
+			[in, out, optional] LPDWORD lpcbData
+		  );
+		*/
+		result = RegEnumValue(hOpenKey, index, valueName, &valueNameSize, NULL, &type, dataSize, longPointerCountByteData);
+
+		if (ERROR_SUCCESS == result) {
+			printf("Value[%ld] : Name = %s, Data Size = %d, Type = %lu\n", index, valueName, * dataSize, type);
+		} else {
+			printf("Error enumerating values : %lu\n", result);
+		}
+		printf("aaa");
 
 	}
 
@@ -67,4 +110,8 @@ void EnumerateRegistryKey(HKEY hKey, const char * subKey) {
 
 int main() {
 	EnumerateRegistryKey(HKEY_CURRENT_USER, "Software");
+
+	while (1) {printf("bbbb");}
+
+
 }

@@ -13,8 +13,9 @@ void EnumerateRegistryKey(HKEY hKey, const char *subKey) {
 
     // Open the specified registry key
     result = RegOpenKeyEx(hKey, subKey, 0, KEY_READ, &hOpenKey);
+    /*#define ERROR_SUCCESS 0 (0x0) //the operation completed successfully.*/
     if (result != ERROR_SUCCESS) {
-        printf("Failed to open registry key: %ld\n", result);
+	printf("Failed to open registry key ! %ld (ERROR_FILE_NOT FOUND)\n", result);
         return;
     }
 
